@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Stock Screener</title>
+    <link rel="icon" href="{{ url_for('static', filename='images/favicon.ico') }}" type="image/x-icon">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.2.2/css/dataTables.dataTables.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.0/jszip.min.js"></script>
+</head>
+
+<body>
+    <button id="dark-mode-toggle" class="btn btn-secondary dark-toggle">🌙</button>
+
+    <div class="card" id="main-card">
+        <h1>Stock Screener</h1>
+        <input type="file" id="file-input" accept=".csv,.zip" multiple style="display: none;">
+        <div id="drop-zone">
+            <p>Drag & drop your files here, or click to select files (accepted file types are .csv or .zip containing .csv)</p>
+        </div>
+
+        <div id="results-container">
+            <span class="tooltip-hint">Hover over headers for more info</span>
+            <div class="table-wrapper">
+                <table id="resultsTable">
+                    <thead>
+                        <tr>
+                            <th>Stock</th>
+                            <th>Std Dev (%)</th>
+                            <th data-tooltip="Number of days where the daily change exceeded 10%">Large Changes</th>
+                            <th data-tooltip="Average of daily returns (today's close vs. yesterday's)">Avg Daily Return (%)</th>
+                            <th data-tooltip="Annualized volatility (of daily returns × √252)">Annual Volatility (%)</th>
+                            <th data-tooltip="Return per unit of risk (assumes 0% risk-free rate)">Sharpe Ratio</th>
+                            <th data-tooltip="Maximum peak-to-trough decline observed">Max Drawdown (%)</th>
+                            <th data-tooltip="Percentage of trading days that closed up">Positive Days (%)</th>
+                            <th data-tooltip="20-day moving average of closing prices">MA 20</th>
+                            <th data-tooltip="Where price sits between the upper/lower bands">Bollinger %B</th>
+                            <th data-tooltip="Relative Strength Index (14-day momentum oscillator)">RSI</th>
+                            <th data-tooltip="Days where volume ≥ 2× average volume">Volume Spikes</th>
+                            <th class="action-col"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="results-body"></tbody>
+                </table>
+            </div>
+            <div class="controls">
+                <button type="button" id="clear-results" class="btn btn-danger">Clear All Results</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/2.2.2/js/dataTables.min.js"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+
+</html>
