@@ -8,15 +8,15 @@ let resultsContainer = document.getElementById('results-container');
 
 // — Dark mode toggle — 
 document.addEventListener('DOMContentLoaded', () => {
-    const toggle = document.getElementById('dark-mode-toggle');
+    const darkModeToggle = document.getElementById('dark-mode-toggle');
     const dark = localStorage.getItem('darkMode') === 'true';
     document.body.classList.toggle('dark-mode', dark);
-    toggle.textContent = dark ? '☀️' : '🌙';
+    darkModeToggle.textContent = dark ? '☀️' : '🌙';
 
-    toggle.addEventListener('click', () => {
+    darkModeToggle.addEventListener('click', () => {
         const isDark = document.body.classList.toggle('dark-mode');
         localStorage.setItem('darkMode', isDark);
-        toggle.textContent = isDark ? '☀️' : '🌙';
+        darkModeToggle.textContent = isDark ? '☀️' : '🌙';
     });
 
     // Initialize empty DataTable immediately
@@ -47,30 +47,33 @@ dropZone.addEventListener('click', () => fileInput.click());
 dropZone.addEventListener('drop', async e => {
     const dt = e.dataTransfer;
     for (let f of dt.files) await processFile(f);
-    fileInput.value = '';       // clear selection
-    await doUpload();           // auto‐upload on drop
+    fileInput.value = '';
+    await doUpload();
 });
 
 fileInput.addEventListener('change', async () => {
     for (let f of fileInput.files) await processFile(f);
     fileInput.value = '';
-    await doUpload();           // auto‐upload on select
+    await doUpload();
 });
 
 async function processFile(file) {
     if (file.name.endsWith('.zip')) {
         const buf = await file.arrayBuffer();
         const zip = await JSZip.loadAsync(buf);
+        let validFileFound = false;
+
         for (let name of Object.keys(zip.files)) {
-            if (name.endsWith('.csv')) {
-                const blob = await zip.files[name].async('blob');
-                files.push(new File([blob], name, { type: 'text/csv' }));
-            }
+            const blob = await zip.files[name].async('blob');
+            files.push(new File([blob], name, { type: 'text/csv' }));
+            validFileFound = true;
         }
-    } else if (file.name.endsWith('.csv')) {
-        files.push(file);
+
+        if (!validFileFound) {
+            alert(`ZIP file "${file.name}" contains no files.`);
+        }
     } else {
-        alert(`Unsupported type: ${file.name}`);
+        files.push(file);
     }
 }
 
@@ -86,11 +89,37 @@ async function doUpload() {
             headers: { 'X-Requested-With': 'XMLHttpRequest' },
             body: fd
         });
+
+        if (!res.ok) {
+            throw new Error(`Server error (${res.status}): ${await res.text()}`);
+        }
+
         const { results } = await res.json();
-        appendResults(results);
+
+        const validResults = results.filter(r => !r.error);
+        const errorResults = results.filter(r => r.error);
+
+        if (validResults.length) {
+            appendResults(validResults);
+        }
+
+        if (errorResults.length) {
+            const failedFiles = [...new Set(
+                errorResults.map(r =>
+                    r.file_name.split(/[/\\]/).pop()
+                )
+            )];
+
+            const failedFilesMsg = failedFiles.join("\n");
+            if (failedFilesMsg.length) {
+                alert(`The following file${failedFiles.length > 1 ? 's' : ''} failed to upload:\n\n` + failedFilesMsg);
+            }
+        }
+
         files = [];
     } catch (err) {
-        alert('Upload error: ' + err);
+        alert('Could not upload files. Make sure you are uploading valid files (no folders)');
+        files = [];
     }
 }
 

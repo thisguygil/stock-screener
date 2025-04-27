@@ -15,9 +15,23 @@
 
     <div class="card" id="main-card">
         <h1>Stock Screener</h1>
-        <input type="file" id="file-input" accept=".csv,.zip" multiple style="display: none;">
+
+        <div class="format-instructions">
+            <strong>Expected File Format:</strong>
+            <ul>
+                <li>CSV columns (no header row): <code>Date, Open, High, Low, Close, Volume</code></li>
+                <li>Any file extension is fine; contents are validated on upload</li>
+                <li>ZIP archives are supported, but not normal folders</li>
+                <li>Example row: <code>20240101,172.5,175.0,171.0,174.0,20000000</code></li>
+            </ul>
+            <a href="{{ url_for('static', filename='files/example.zip') }}" download>
+                📥 Download an example ZIP
+            </a>
+        </div>
+
+        <input type="file" id="file-input" multiple style="display: none;">
         <div id="drop-zone">
-            <p>Drag & drop your files here, or click to select files (accepted file types are .csv or .zip containing .csv)</p>
+            <p>Drag & drop your files here, or click to select files</p>
         </div>
 
         <div id="results-container">

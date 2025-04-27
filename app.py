@@ -240,10 +240,10 @@ def index():
                 rsi = compute_rsi(prices)
                 vol_spikes = compute_volume_spikes(volumes)
 
-                stock_symbol = os.path.splitext(os.path.basename(file.filename))[0]
-                chart_link = f"https://www.wsj.com/market-data/quotes/{stock_symbol.upper()}"
+                stock_symbol = os.path.splitext(os.path.basename(file.filename))[0][1:].upper()
+                chart_link = f"https://www.wsj.com/market-data/quotes/{stock_symbol}"
                 results.append({
-                    "file_name": stock_symbol.upper(),
+                    "file_name": stock_symbol,
                     "chart_link": chart_link,
                     "std_dev": f"{std_dev:.2f}%",
                     "large_changes": large_changes,

@@ -285,3 +285,42 @@ th[data-tooltip]:hover::before {
 body.dark-mode .tooltip-hint {
     color: #aaa;
 }
+
+.format-instructions {
+    background-color: #e9f7ff;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    font-size: 0.95rem;
+    line-height: 1.4;
+}
+
+body.dark-mode .format-instructions {
+    background-color: #2a2a2a;
+    color: #ddd;
+}
+
+.format-instructions ul {
+    margin-top: 5px;
+    padding-left: 20px;
+}
+
+.format-instructions code {
+    background-color: rgba(0,0,0,0.05);
+    padding: 2px 4px;
+    border-radius: 4px;
+}
+
+body.dark-mode .format-instructions code {
+    background-color: rgba(255,255,255,0.1);
+}
+
+/* simple “hidden” helper */
+.hidden {
+    display: none !important;
+}
+
+/* give the toggle a little breathing room */
+#toggle-upload-area {
+    margin-bottom: 15px;
+}
